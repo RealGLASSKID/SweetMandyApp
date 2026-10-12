@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, ShoppingBag, X, User } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -20,14 +20,30 @@ export function Header() {
   const { itemCount } = useCart();
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   if (pathname.startsWith("/admin") || pathname.startsWith("/rider")) return null;
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+  const isHome = pathname === "/";
 
   return (
-    <header className="sticky top-0 z-50 glass-strong">
+    <header
+      className={cn(
+        "sticky top-0 z-50 transition-all duration-300",
+        scrolled || !isHome || open
+          ? "glass-strong shadow-soft"
+          : "bg-transparent border-transparent",
+      )}
+    >
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:h-16">
         <Link href="/" className="shrink-0 transition-opacity hover:opacity-90" onClick={() => setOpen(false)}>
           <Logo size="md" />
@@ -42,7 +58,7 @@ export function Header() {
                 "rounded-full px-4 py-2 text-sm font-medium transition-all duration-200",
                 isActive(l.href)
                   ? "bg-primary/15 text-primary"
-                  : "text-muted-foreground hover:bg-white/5 hover:text-foreground",
+                  : "text-muted-foreground hover:bg-white/8 hover:text-foreground",
               )}
             >
               {l.label}
@@ -89,7 +105,6 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile drawer */}
       <div
         className={cn(
           "overflow-hidden border-t border-white/5 transition-all duration-300 ease-out md:hidden",
