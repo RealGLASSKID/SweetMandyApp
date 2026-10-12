@@ -1,0 +1,28 @@
+# dependencies
+node_modules
+
+# Next.js build output
+.next
+out
+next-env.d.ts
+*.tsbuildinfo
+
+# environment files (these hold your secret keys, never commit them)
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+npm-debug.log*
+
+# editor and OS files
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Firebase
+.firebase
+firebase-debug.log
+*-firebase-adminsdk-*.json
