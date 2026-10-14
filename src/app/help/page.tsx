@@ -12,11 +12,11 @@ const faqs = [
   },
   {
     q: "How does Delivery work?",
-    a: "Sign in, place your order, and pay for the food online with Paystack. The delivery fee is paid in cash to the rider when your order arrives.",
+    a: "Sign in, place your order, and transfer the food payment to our bank account and upload the screenshot. The delivery fee is paid in cash to the rider when your order arrives.",
   },
   {
     q: "What payment methods do you accept?",
-    a: "Delivery: Paystack (card, bank transfer, USSD). Take Away: pay at the counter when you collect.",
+    a: "Delivery: bank transfer + screenshot. Take Away: pay at the counter when you collect.",
   },
   {
     q: "What are your opening hours?",

@@ -4,6 +4,8 @@ import { Header } from "@/components/layout/Header";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Footer } from "@/components/layout/Footer";
 import { RegisterSW } from "@/components/pwa/RegisterSW";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { NotificationPrompt } from "@/components/pwa/NotificationPrompt";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -66,6 +68,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <BottomNav />
           </div>
           <RegisterSW />
+          <InstallPrompt />
+          <NotificationPrompt />
         </Providers>
       </body>
     </html>

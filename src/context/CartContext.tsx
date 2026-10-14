@@ -4,7 +4,7 @@ import type { CartItem, Food, FoodAddon } from "@/types";
 
 const STORAGE_KEY = "sweetmandy.cart.v1";
 
-/** Delivery fee is paid in cash to the rider on arrival. Food is paid via Paystack. */
+/** Delivery fee is paid in cash to the rider on arrival. Food is paid by bank transfer. */
 export const DEFAULT_DELIVERY_FEE = 1000;
 
 interface CartContextValue {
@@ -12,7 +12,7 @@ interface CartContextValue {
   itemCount: number;
   subtotal: number;
   deliveryFee: number;
-  total: number; // food total only (Paystack)
+  total: number; // food total only (bank transfer)
   addItem: (
     food: Food,
     options?: { quantity?: number; addons?: FoodAddon[]; specialInstructions?: string },
@@ -104,7 +104,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       itemCount: items.reduce((s, i) => s + i.quantity, 0),
       subtotal,
       deliveryFee,
-      total: subtotal, // Paystack charges food only
+      total: subtotal, // bank transfer charges food only
       addItem,
       updateQuantity,
       removeItem,

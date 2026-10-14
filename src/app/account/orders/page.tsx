@@ -1,5 +1,5 @@
 "use client";
-
+import { RequireAuth } from "@/components/auth/RequireAuth";
 import Link from "next/link";
 import { Receipt } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,7 +18,7 @@ const statusColor: Record<string, string> = {
   cancelled: "bg-destructive/15 text-destructive",
 };
 
-export default function AccountOrdersPage() {
+function AccountOrdersInner() {
   const orders = useOrders();
 
   return (
@@ -81,5 +81,14 @@ export default function AccountOrdersPage() {
         )}
       </div>
     </div>
+  );
+}
+
+
+export default function AccountOrdersPage() {
+  return (
+    <RequireAuth soft>
+      <AccountOrdersInner />
+    </RequireAuth>
   );
 }

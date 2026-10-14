@@ -1,15 +1,30 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Plus, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { formatNaira } from "@/lib/format";
 import type { Food } from "@/types";
 import { toast } from "sonner";
 
 export function FoodCard({ food }: { food: Food }) {
   const { addItem } = useCart();
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  const handleAdd = () => {
+    if (loading) return;
+    if (!user) {
+      toast.error("Sign in to add items to your cart");
+      router.push("/login?next=/menu");
+      return;
+    }
+    addItem(food);
+    toast.success(`${food.name} added to cart`);
+  };
 
   return (
     <article className="group overflow-hidden rounded-2xl border border-white/6 bg-card shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-primary/25 hover:shadow-glow">
@@ -50,10 +65,7 @@ export function FoodCard({ food }: { food: Food }) {
             size="icon"
             className="size-8 rounded-full shadow-glow"
             disabled={!food.available}
-            onClick={() => {
-              addItem(food);
-              toast.success(`${food.name} added to cart`);
-            }}
+            onClick={handleAdd}
           >
             <Plus className="size-4" />
           </Button>

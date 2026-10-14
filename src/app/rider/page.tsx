@@ -1,108 +1,128 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bike, MapPin, Phone, Package, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { mockOrders, mockRiders } from "@/data/mock";
+import { RequireAuth } from "@/components/auth/RequireAuth";
+import { useAuth } from "@/context/AuthContext";
+import { fetchOrders, updateOrderStatus } from "@/services/api";
+import type { Order } from "@/types";
+import { formatNaira } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
-export default function RiderDashboard() {
-  const rider = mockRiders[1]; // demo busy rider
-  const [orders, setOrders] = useState(mockOrders.filter((o) => o.orderType === "delivery"));
+function RiderInner() {
+  const { user } = useAuth();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const markDelivered = (id: string) => {
-    setOrders((prev) =>
-      prev.map((o) =>
-        o.id === id
-          ? {
-              ...o,
-              status: "delivered" as const,
-              statusHistory: [
-                ...o.statusHistory,
-                { status: "delivered" as const, label: "Delivered", timestamp: new Date().toISOString() },
-              ],
-            }
-          : o
-      )
-    );
+  const load = async () => {
+    setLoading(true);
+    try {
+      const all = await fetchOrders();
+      setOrders(
+        all.filter(
+          (o) =>
+            o.orderType === "delivery" &&
+            o.paymentState === "confirmed" &&
+            !["delivered", "cancelled", "collected"].includes(o.status),
+        ),
+      );
+    } catch {
+      toast.error("Could not load orders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
+
+  const markDelivered = async (id: string) => {
+    try {
+      await updateOrderStatus(id, "delivered", "Delivered");
+      toast.success("Marked delivered");
+      load();
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Failed");
+    }
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
+    <div className="mx-auto max-w-lg px-4 py-8">
       <div className="flex items-center gap-3">
-        <div className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <div className="flex size-12 items-center justify-center rounded-2xl bg-primary/15 text-primary">
           <Bike className="size-6" />
         </div>
         <div>
-          <h1 className="font-display text-2xl font-bold">Rider Dashboard</h1>
-          <p className="text-sm text-muted-foreground">
-            {rider.fullName} · {rider.status} · {rider.deliveriesToday} deliveries today
-          </p>
+          <h1 className="font-display text-2xl font-semibold">Rider</h1>
+          <p className="text-sm text-muted-foreground">{user?.displayName || user?.email}</p>
         </div>
       </div>
 
-      <div className="mt-8 space-y-4">
-        <h2 className="font-semibold">Active & recent orders</h2>
-        {orders.length === 0 && (
-          <p className="rounded-2xl border border-dashed border-border p-8 text-center text-muted-foreground">
-            No delivery orders right now.
-          </p>
-        )}
+      <p className="mt-4 text-sm text-muted-foreground">
+        Mainland deliveries with confirmed payment. Call the customer if needed.
+      </p>
+
+      {loading && <p className="mt-8 text-center text-sm text-muted-foreground">Loading…</p>}
+
+      <div className="mt-6 space-y-3">
         {orders.map((order) => (
-          <div
-            key={order.id}
-            className={cn(
-              "rounded-2xl border border-border bg-card p-5 shadow-soft",
-              order.status === "delivered" && "opacity-60"
-            )}
-          >
-            <div className="flex items-start justify-between gap-3">
+          <article key={order.id} className="rounded-2xl border border-border bg-card p-4 shadow-soft">
+            <div className="flex items-start justify-between gap-2">
               <div>
                 <p className="font-semibold">{order.orderNumber}</p>
-                <p className="text-sm text-muted-foreground">{order.customerName}</p>
+                <p className="text-sm">{order.customerName}</p>
               </div>
               <span
                 className={cn(
-                  "rounded-full px-2.5 py-0.5 text-xs font-medium",
-                  order.status === "out_for_delivery"
-                    ? "bg-warning/20 text-warning-foreground"
-                    : order.status === "delivered"
-                    ? "bg-success/20 text-success"
-                    : "bg-muted text-muted-foreground"
+                  "rounded-full px-2.5 py-0.5 text-[11px] font-bold capitalize",
+                  "bg-primary/15 text-primary",
                 )}
               >
                 {order.status.replace(/_/g, " ")}
               </span>
             </div>
-
-            <div className="mt-4 space-y-2 text-sm">
+            <div className="mt-3 space-y-1.5 text-sm text-muted-foreground">
               <p className="flex items-center gap-2">
-                <Phone className="size-4 text-primary" />
-                <a href={`tel:${order.customerPhone}`} className="font-medium text-primary hover:underline">
+                <Phone className="size-3.5 text-primary" />
+                <a href={`tel:${order.customerPhone}`} className="text-foreground hover:underline">
                   {order.customerPhone}
                 </a>
               </p>
               <p className="flex items-start gap-2">
-                <MapPin className="mt-0.5 size-4 shrink-0 text-primary" />
-                <span>{order.deliveryAddress}</span>
+                <MapPin className="mt-0.5 size-3.5 shrink-0 text-primary" />
+                {order.deliveryAddress || "—"} ({order.deliveryArea})
               </p>
               <p className="flex items-center gap-2">
-                <Package className="size-4 text-primary" />
+                <Package className="size-3.5 text-primary" />
                 {order.items.map((i) => `${i.quantity}× ${i.name}`).join(", ")}
               </p>
-              <p className="text-muted-foreground">
-                Food paid (Paystack) · Delivery fee ₦{order.deliveryFee.toLocaleString()} — collect from customer
+              <p className="text-xs">
+                Food {formatNaira(order.total)} paid · Collect delivery fee in cash
               </p>
             </div>
-
-            {order.status === "out_for_delivery" && (
-              <Button className="mt-4 w-full" onClick={() => markDelivered(order.id)}>
-                <CheckCircle2 className="size-4" /> Mark as delivered
-              </Button>
-            )}
-          </div>
+            <Button
+              className="mt-4 w-full rounded-full"
+              onClick={() => markDelivered(order.id)}
+            >
+              <CheckCircle2 className="size-4" /> Mark delivered
+            </Button>
+          </article>
         ))}
+        {!loading && orders.length === 0 && (
+          <p className="py-12 text-center text-sm text-muted-foreground">No active deliveries</p>
+        )}
       </div>
     </div>
+  );
+}
+
+export default function RiderPage() {
+  return (
+    <RequireAuth roles={["rider", "admin"]}>
+      <RiderInner />
+    </RequireAuth>
   );
 }

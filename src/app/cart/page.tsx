@@ -5,8 +5,9 @@ import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { formatNaira } from "@/lib/format";
 import { Button } from "@/components/ui/button";
+import { RequireAuth } from "@/components/auth/RequireAuth";
 
-export default function CartPage() {
+function CartInner() {
   const { items, itemCount, subtotal, deliveryFee, updateQuantity, removeItem } = useCart();
 
   if (items.length === 0) {
@@ -85,7 +86,7 @@ export default function CartPage() {
           <span className="font-semibold">{formatNaira(deliveryFee)}</span>
         </div>
         <p className="text-xs text-muted-foreground">
-          For Delivery: food is paid online via Paystack. Delivery fee is cash to the rider on arrival.
+          For Delivery: transfer food payment to our bank account, upload screenshot. Delivery fee is cash to the rider on arrival.
         </p>
       </div>
 
@@ -93,5 +94,13 @@ export default function CartPage() {
         <Link href="/checkout">Proceed to checkout</Link>
       </Button>
     </div>
+  );
+}
+
+export default function CartPage() {
+  return (
+    <RequireAuth soft>
+      <CartInner />
+    </RequireAuth>
   );
 }

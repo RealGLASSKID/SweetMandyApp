@@ -95,8 +95,14 @@ export interface OrderStatusEvent {
   timestamp: string | null;
 }
 
-export type PaymentMethod = "paystack" | "cash";
-export type PaymentState = "idle" | "processing" | "successful" | "failed";
+export type PaymentMethod = "bank_transfer" | "pay_at_shop";
+/** pending = awaiting transfer proof; awaiting_confirmation = user submitted; confirmed = admin/user confirmed; rejected */
+export type PaymentState =
+  | "not_required"
+  | "pending"
+  | "awaiting_confirmation"
+  | "confirmed"
+  | "rejected";
 
 export interface Order {
   id: string;
@@ -118,6 +124,9 @@ export interface Order {
   riderId?: string;
   riderName?: string;
   specialNotes?: string;
+  paymentProofUrl?: string;
+  paymentConfirmedAt?: string;
+  paymentNote?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -150,4 +159,13 @@ export const BUSINESS = {
   phone: "0803 541 8887",
   hours: "Open · Closes 9:30 pm",
   deliveryZone: "Lagos Mainland only (Island coming soon)",
+} as const;
+
+
+/** Sweet Mandy bank transfer details — update to real account */
+export const BANK = {
+  bankName: "Access Bank",
+  accountName: "Sweet Mandy Bakery's",
+  accountNumber: "0123456789",
+  /** Amount for food only; delivery fee is cash to rider */
 } as const;

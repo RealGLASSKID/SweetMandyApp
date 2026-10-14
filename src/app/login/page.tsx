@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,8 +10,10 @@ import { Logo } from "@/components/brand/Logo";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") || "/menu";
   const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,12 +25,26 @@ export default function LoginPage() {
     try {
       await signIn(email.trim(), password);
       toast.success("Welcome back!");
-      router.push("/menu");
+      router.push(next);
     } catch (err: unknown) {
-      const msg =
-        err && typeof err === "object" && "code" in err
-          ? String((err as { code: string }).code).replace("auth/", "").replace(/-/g, " ")
-          : "Could not sign in";
+      let msg = "Could not sign in";
+      if (err && typeof err === "object" && "code" in err) {
+        const code = String((err as { code: string }).code);
+        if (code.includes("api-key-not-valid") || code === "auth/api-key-not-valid") {
+          msg =
+            "Firebase API key invalid. Check NEXT_PUBLIC_FIREBASE_API_KEY in .env.local and restart npm run dev";
+        } else if (
+          code === "auth/invalid-credential" ||
+          code === "auth/wrong-password" ||
+          code === "auth/user-not-found"
+        ) {
+          msg = "Wrong email or password";
+        } else if (code === "auth/too-many-requests") {
+          msg = "Too many attempts. Try again later";
+        } else {
+          msg = code.replace("auth/", "").replace(/-/g, " ");
+        }
+      }
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -77,5 +94,13 @@ export default function LoginPage() {
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="p-16 text-center text-muted-foreground">Loading…</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

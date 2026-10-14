@@ -65,7 +65,7 @@ export const mockOrders: Order[] = [{
     { status: "preparing", label: "Preparing", timestamp: "2026-10-05T10:15:00Z" },
     { status: "out_for_delivery", label: "Out for delivery", timestamp: "2026-10-05T10:40:00Z" },
   ],
-  paymentMethod: "paystack", paymentState: "successful",
+  paymentMethod: "bank_transfer", paymentState: "confirmed",
   deliveryAddress: "Ijegun Last Bus Stop, near the bakery", deliveryArea: "Mainland",
   riderId: "r-2", riderName: "Chidi Okoro",
   createdAt: "2026-10-05T10:00:00Z", updatedAt: "2026-10-05T10:40:00Z",

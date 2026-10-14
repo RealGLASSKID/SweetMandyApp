@@ -187,7 +187,7 @@ export default function HomePage() {
               {[
                 { icon: Smartphone, t: "Install on Android & iPhone home screen" },
                 { icon: ShoppingBag, t: "Full menu, cart & order tracking" },
-                { icon: CreditCard, t: "Pay food online with Paystack (delivery)" },
+                { icon: CreditCard, t: "Transfer food payment to our bank (delivery)" },
                 { icon: Bike, t: "Riders deliver on Lagos Mainland only" },
               ].map(({ icon: Icon, t }) => (
                 <li key={t} className="flex items-center gap-3">
@@ -286,12 +286,12 @@ export default function HomePage() {
               {
                 icon: Bike,
                 t: "Mainland delivery",
-                d: "Food paid via Paystack. Delivery fee to the rider on arrival.",
+                d: "Transfer food payment to our bank. Delivery fee to the rider on arrival.",
               },
               {
                 icon: CreditCard,
                 t: "Secure payments",
-                d: "Paystack for delivery orders. Safe and familiar in Nigeria.",
+                d: "Bank transfer with screenshot proof. Verified by Sweet Mandy.",
               },
               {
                 icon: Shield,
@@ -325,7 +325,7 @@ export default function HomePage() {
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
           {[
             { n: "01", t: "Browse the menu", d: "Meals, small chops, bread, ice cream and drinks with clear prices." },
-            { n: "02", t: "Take Away or Delivery", d: "Collect in store, or Mainland delivery with Paystack for food." },
+            { n: "02", t: "Take Away or Delivery", d: "Collect in store, or Mainland delivery — pay food by bank transfer." },
             { n: "03", t: "Enjoy", d: "Delivery fee paid to the rider on arrival. Take Away pays at the shop." },
           ].map((s) => (
             <div
@@ -347,7 +347,7 @@ export default function HomePage() {
             { v: "Daily", l: "Fresh baking" },
             { v: "Mainland", l: "Delivery zone" },
             { v: "PWA", l: "Install on phone" },
-            { v: "Paystack", l: "Secure checkout" },
+            { v: "Transfer", l: "Bank payment" },
           ].map((s) => (
             <div key={s.l}>
               <p className="font-display text-xl font-semibold text-primary sm:text-2xl">{s.v}</p>
