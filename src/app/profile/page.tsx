@@ -12,7 +12,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-md px-4 py-16 text-center text-muted-foreground animate-pulse-soft">
+      <div className="mx-auto max-w-md px-4 py-16 text-center text-muted-foreground">
         Loading…
       </div>
     );
@@ -30,12 +30,24 @@ export default function ProfilePage() {
     );
   }
 
+  const initial = (user.displayName || user.email || "U").charAt(0).toUpperCase();
+
   return (
     <div className="mx-auto max-w-md px-4 py-10 animate-fade-up">
       <div className="rounded-3xl glass p-6 shadow-soft">
-        <div className="flex size-14 items-center justify-center rounded-full bg-primary/20 font-display text-2xl font-semibold text-primary">
-          {(user.displayName || user.email || "U").charAt(0).toUpperCase()}
-        </div>
+        {user.photoURL ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={user.photoURL}
+            alt={user.displayName || "Profile"}
+            className="size-16 rounded-full object-cover ring-2 ring-primary/30"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <div className="flex size-16 items-center justify-center rounded-full bg-primary/20 font-display text-2xl font-semibold text-primary">
+            {initial}
+          </div>
+        )}
         <h1 className="mt-4 font-display text-2xl font-semibold tracking-tight">
           {user.displayName || "Customer"}
         </h1>
