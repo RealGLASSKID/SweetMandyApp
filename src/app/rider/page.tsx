@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Bike, MapPin, Phone, Package, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RequireAuth } from "@/components/auth/RequireAuth";
@@ -16,28 +16,31 @@ function RiderInner() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true);
     try {
       const all = await fetchOrders();
+      const list = Array.isArray(all) ? all : [];
       setOrders(
-        all.filter(
+        list.filter(
           (o) =>
             o.orderType === "delivery" &&
-            o.paymentState === "confirmed" &&
+            (o.paymentState === "confirmed" || o.paymentState === "not_required") &&
             !["delivered", "cancelled", "collected"].includes(o.status),
         ),
       );
-    } catch {
+    } catch (e) {
+      console.error(e);
       toast.error("Could not load orders");
+      setOrders([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const markDelivered = async (id: string) => {
     try {
@@ -75,12 +78,7 @@ function RiderInner() {
                 <p className="font-semibold">{order.orderNumber}</p>
                 <p className="text-sm">{order.customerName}</p>
               </div>
-              <span
-                className={cn(
-                  "rounded-full px-2.5 py-0.5 text-[11px] font-bold capitalize",
-                  "bg-primary/15 text-primary",
-                )}
-              >
+              <span className={cn("rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-bold capitalize text-primary")}>
                 {order.status.replace(/_/g, " ")}
               </span>
             </div>
@@ -93,20 +91,17 @@ function RiderInner() {
               </p>
               <p className="flex items-start gap-2">
                 <MapPin className="mt-0.5 size-3.5 shrink-0 text-primary" />
-                {order.deliveryAddress || "—"} ({order.deliveryArea})
+                {order.deliveryAddress || "—"} {order.deliveryArea ? `(${order.deliveryArea})` : ""}
               </p>
               <p className="flex items-center gap-2">
                 <Package className="size-3.5 text-primary" />
-                {order.items.map((i) => `${i.quantity}× ${i.name}`).join(", ")}
+                {(order.items || []).map((i) => `${i.quantity}× ${i.name}`).join(", ") || "Items"}
               </p>
               <p className="text-xs">
-                Food {formatNaira(order.total)} paid · Collect delivery fee in cash
+                Food {formatNaira(order.total ?? order.subtotal ?? 0)} paid · Collect delivery fee in cash
               </p>
             </div>
-            <Button
-              className="mt-4 w-full rounded-full"
-              onClick={() => markDelivered(order.id)}
-            >
+            <Button className="mt-4 w-full rounded-full" onClick={() => markDelivered(order.id)}>
               <CheckCircle2 className="size-4" /> Mark delivered
             </Button>
           </article>

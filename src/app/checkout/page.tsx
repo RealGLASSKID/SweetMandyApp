@@ -116,11 +116,10 @@ function CheckoutPageInner() {
     try {
       const url = await uploadToCloudinary(file);
       setProofUrl(url);
-      await submitPaymentProof(orderId, url);
-      toast.success("Screenshot uploaded — waiting for confirmation");
-    } catch (e) {
-      console.error(e);
-      toast.error("Upload failed. Check Cloudinary env keys.");
+      toast.success("Screenshot uploaded");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Upload failed. Check Cloudinary env keys.";
+      toast.error(msg);
     } finally {
       setUploading(false);
     }

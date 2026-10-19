@@ -11,6 +11,7 @@ import {
   Settings,
   Bike,
   UserPlus,
+  Home,
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,8 +23,8 @@ const links: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/admin/foods", label: "Menu items", icon: UtensilsCrossed },
   { href: "/admin/categories", label: "Categories", icon: Tags },
   { href: "/admin/customers", label: "Customers", icon: Users },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
   { href: "/admin/staff", label: "Staff & riders", icon: UserPlus },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export function AdminSidebar() {
@@ -63,6 +64,13 @@ export function AdminSidebar() {
         >
           <Bike className="size-4" />
           Rider view
+        </Link>
+        <Link
+          href="/"
+          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-sidebar-accent/60"
+        >
+          <Home className="size-4" />
+          Back to site
         </Link>
       </nav>
     </aside>

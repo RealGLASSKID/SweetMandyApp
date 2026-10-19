@@ -15,29 +15,58 @@ export function Footer() {
         <div>
           <h3 className="font-display text-sm font-semibold">Order</h3>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li><Link href="/menu" className="transition-colors hover:text-primary">Menu</Link></li>
-            <li><Link href="/cart" className="transition-colors hover:text-primary">Cart</Link></li>
-            <li><Link href="/account/orders" className="transition-colors hover:text-primary">My orders</Link></li>
+            <li>
+              <Link href="/menu" className="transition-colors hover:text-primary">
+                Menu
+              </Link>
+            </li>
+            <li>
+              <Link href="/cart" className="transition-colors hover:text-primary">
+                Cart
+              </Link>
+            </li>
+            <li>
+              <Link href="/account/orders" className="transition-colors hover:text-primary">
+                My orders
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
           <h3 className="font-display text-sm font-semibold">Company</h3>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li><Link href="/about" className="transition-colors hover:text-primary">About</Link></li>
-            <li><Link href="/help" className="transition-colors hover:text-primary">Help</Link></li>
+            <li>
+              <Link href="/about" className="transition-colors hover:text-primary">
+                About
+              </Link>
+            </li>
+            <li>
+              <Link href="/help" className="transition-colors hover:text-primary">
+                Help
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="transition-colors hover:text-primary">
+                Contact
+              </Link>
+            </li>
           </ul>
         </div>
         <div>
           <h3 className="font-display text-sm font-semibold">Contact</h3>
           <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
-            <li>{BUSINESS.phone}</li>
+            <li>
+              <Link href="/contact" className="transition-colors hover:text-primary">
+                {BUSINESS.phone}
+              </Link>
+            </li>
             <li className="leading-snug">{BUSINESS.address}</li>
             <li>{BUSINESS.hours}</li>
           </ul>
         </div>
       </div>
       <div className="border-t border-white/5 py-4 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Sweet Mandy Bakery&apos;s · Ijegun, Lagos
+        © {new Date().getFullYear()} Sweet Mandy Food &amp; Bakery · Ijegun, Lagos
       </div>
     </footer>
   );

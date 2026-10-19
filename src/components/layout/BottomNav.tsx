@@ -20,11 +20,11 @@ export function BottomNav() {
   const pathname = usePathname();
 
   if (
+    pathname === "/welcome" ||
+    pathname === "/login" ||
+    pathname === "/signup" ||
     pathname.startsWith("/admin") ||
-    pathname.startsWith("/rider") ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/signup") ||
-    pathname.startsWith("/checkout")
+    pathname.startsWith("/rider")
   ) {
     return null;
   }

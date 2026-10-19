@@ -1,6 +1,6 @@
 "use client";
 
-import { ShoppingBag, Users, Banknote, TrendingUp, Clock, UtensilsCrossed } from "lucide-react";
+import { ShoppingBag, Banknote, TrendingUp, Clock, UtensilsCrossed } from "lucide-react";
 import { useOrders, useFoods } from "@/hooks/useCatalogue";
 import { formatNaira } from "@/lib/format";
 import Link from "next/link";
@@ -18,7 +18,7 @@ export default function AdminOverviewPage() {
   const stats = [
     { label: "Total orders", value: orderList.length, icon: ShoppingBag, href: "/admin/orders" },
     { label: "Menu items", value: foods.data?.length ?? 0, icon: UtensilsCrossed, href: "/admin/foods" },
-    { label: "Revenue (mock)", value: formatNaira(revenue), icon: Banknote, href: "/admin/orders" },
+    { label: "Revenue", value: formatNaira(revenue), icon: Banknote, href: "/admin/orders" },
     { label: "Active orders", value: pending, icon: TrendingUp, href: "/admin/orders" },
   ];
 
